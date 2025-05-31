@@ -1,0 +1,56 @@
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 100
+    max-connections: 100
+    accept-count: 100
+
+spring:
+  application:
+    name: event-receiver-service
+
+app:
+  allowed-customer-tiers:
+    - free
+    - pro
+    - enterprise
+  s3:
+    bucket-name: shrinil-portal26-events
+    region: ap-south-1
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+  batch:
+    max-batch-size-bytes: 5242880  # 5MB
+    max-batch-delay-seconds: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  file:
+    name: logs/event-receiver-service.log
+  level:
+    root: INFO
+    com.eventreceiver: DEBUG
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
